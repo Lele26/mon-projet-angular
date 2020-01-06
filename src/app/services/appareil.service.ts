@@ -13,8 +13,6 @@ export class AppareilService {
       status: 'éteint'
     }
   ];
-  private appareilService: any;
-
 
   switchOnAll() {
     for (const appareil of this.appareils) {
@@ -28,15 +26,12 @@ export class AppareilService {
     }
   }
 
-  onAllumer() {
-    this.appareilService.switchOnAll();
+
+  switchOnOne(i: number) {
+    this.appareils[i].status = 'allumé';
   }
 
-  onEteindre() {
-    if (confirm('Etes-vous sûr de vouloir éteindre tous vos appareils ?')) {
-      this.appareilService.switchOffAll();
-    } else {
-      return null;
-    }
+  switchOffOne(i: number) {
+    this.appareils[i].status = 'éteint';
   }
 }
