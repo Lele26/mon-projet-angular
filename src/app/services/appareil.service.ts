@@ -1,4 +1,5 @@
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs-compat/Subject';
+import {HttpClient} from '@angular/common/http';
 
 export class AppareilService {
 
@@ -21,6 +22,8 @@ export class AppareilService {
       status: 'éteint'
     }
   ];
+
+  constructor(private httpClient: HttpClient) { }
 
   emitAppareilSubject() {
     this.appareilsSubject.next(this.appareils.slice());
@@ -57,6 +60,46 @@ export class AppareilService {
       }
     );
     return appareil;
+  }
+
+  addAppareil(name: string, status: string) {
+    const appareilObject = {
+      id: 0,
+      name: '',
+      status: ''
+    };
+    appareilObject.name = name;
+    appareilObject.status = status;
+    appareilObject.id = this.appareils[(this.appareils.length - 1)].id + 1;
+    this.appareils.push(appareilObject);
+    this.emitAppareilSubject();
+  }
+
+  saveAppareilsToServer() {
+    this.httpClient
+      .put('https://connexionhttp.firebaseio.com/appareils.json', this.appareils)
+      .subscribe(
+        () => {
+          console.log('Enregistrement terminé !');
+        },
+        (error) => {
+          console.log('Erreur ! : ' + error);
+        }
+      );
+  }
+
+  getAppareilsFromServer() {
+    this.httpClient
+      .get<any[]>('https://connexionhttp.firebaseio.com/appareils.json')
+      .subscribe(
+        (response) => {
+          this.appareils = response;
+          this.emitAppareilSubject();
+        },
+        (error) => {
+          console.log('Erreur ! : ' + error);
+        }
+      );
   }
 
 
